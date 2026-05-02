@@ -1,0 +1,22 @@
+# Environments
+.env
+.venv/
+env/
+venv/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Data & Models
+data/
+*.csv
+*.parquet
+*.json
+*.pkl
+*.model
+
+# MLflow tracking directory
+mlruns/
+mlruns.db

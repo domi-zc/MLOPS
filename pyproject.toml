@@ -1,0 +1,16 @@
+[project]
+name = "mlops"
+version = "0.1.0"
+description = "An automated MLOps pipeline predicting short-term Bitcoin price direction using dynamic on-chain data."
+readme = "README.md"
+authors = [
+    { name = "Dominic Zybach", email = "dominic.zybach@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "mlflow>=3.11.1",
+    "pandas>=2.3.3",
+    "pyarrow>=23.0.1",
+    "requests>=2.33.1",
+    "scikit-learn>=1.8.0",
+]
