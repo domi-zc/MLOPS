@@ -1,28 +1,8 @@
-import time
-import requests
 import pandas as pd
 import yfinance as yf
 
-
-def _fetch_with_retry(url: str, headers: dict = None, params: dict = None, max_retries: int = 3) -> dict:
-    """
-    A robust fetcher that implements Exponential Backoff for 429 Rate Limit errors.
-    """
-    for attempt in range(max_retries):
-        response = requests.get(url, headers=headers, params=params)
-        
-        if response.status_code == 200:
-            return response.json()
-            
-        elif response.status_code == 429:
-            wait_time = int(response.headers.get('Retry-After', 2 ** attempt))
-            print(f"Rate limited. Retrying in {wait_time} seconds (Attempt {attempt + 1}/{max_retries})...")
-            time.sleep(wait_time)
-            
-        else:
-            response.raise_for_status()
-            
-    raise Exception(f"Failed to fetch data from {url} after {max_retries} attempts.")
+from coinmetrics.api_client import CoinMetricsClient
+from datetime import datetime, timedelta, timezone
 
 
 def get_bitcoin_price_data(days: int = 30) -> pd.DataFrame:
@@ -40,19 +20,20 @@ def get_bitcoin_price_data(days: int = 30) -> pd.DataFrame:
     return df
 
 
-def get_blockchain_metric(metric_name: str, days: int = 30) -> pd.DataFrame:
+def get_blockchain_metric(metric_name: str = "AdrActCnt", days: int = 30) -> pd.DataFrame:
     """
-    Fetches on-chain metrics from the Blockchain.com API.
+    Fetches daily on-chain metrics using the official CoinMetricsClient.
     """
-    url = f"https://api.blockchain.info/charts/{metric_name}"
-    params = {
-        "timespan": f"{days}days",
-        "format": "json",
-        "sampled": "false" 
-    }
+    client = CoinMetricsClient()
+    start_date = (datetime.now(timezone.utc) - timedelta(days=days)).strftime('%Y-%m-%d')
     
-    data = _fetch_with_retry(url, params=params)
-    df = pd.DataFrame(data["values"]) 
+    metric_data = client.get_asset_metrics(
+        assets='btc',
+        metrics=metric_name,
+        start_time=start_date
+    )
     
-    print(f"Metric '{metric_name}' of the last {days} days successfully downloaded.")
+    df = metric_data.to_dataframe()
+    
+    print(f"Metric '{metric_name}' successfully downloaded. Total rows: {len(df)}.")
     return df

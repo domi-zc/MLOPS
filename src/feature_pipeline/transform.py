@@ -15,15 +15,18 @@ def _normalize_price_data(price_df: pd.DataFrame) -> pd.DataFrame:
 
 def _normalize_address_data(addresses_df: pd.DataFrame) -> pd.DataFrame:
     """
-    Renames Blockchain.com schema, normalizes dates, AND simulates API lag.
+    Normalizes raw CoinMetrics data to standard UTC dates.
     """
-    addresses_df = addresses_df.rename(columns={"x": "timestamp", "y": "n-unique-addresses"})
-    addresses_df["date"] = pd.to_datetime(addresses_df["timestamp"], unit="s").dt.normalize()
+    addresses_df = addresses_df.drop(columns=["asset"], errors="ignore")
+    addresses_df = addresses_df.rename(columns={
+        "time": "date", 
+        "AdrActCnt": "n-unique-addresses"
+    })
+
+    addresses_df["date"] = pd.to_datetime(addresses_df["date"]).dt.tz_localize(None).dt.normalize()
+    addresses_df["n-unique-addresses"] = pd.to_numeric(addresses_df["n-unique-addresses"])
     
-    # Artificially lag the training data by 6 days to prevent Training-Serving Skew
-    addresses_df["n-unique-addresses"] = addresses_df["n-unique-addresses"].shift(6)
-    
-    return addresses_df.drop(columns=["timestamp"])
+    return addresses_df[["date", "n-unique-addresses"]]
 
 
 def _merge_and_handle_lag(price_df: pd.DataFrame, addresses_df: pd.DataFrame) -> pd.DataFrame:
