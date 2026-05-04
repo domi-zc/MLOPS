@@ -1,13 +1,8 @@
-import os
 import time
 import requests
 import pandas as pd
+import yfinance as yf
 
-from dotenv import load_dotenv
-from pycoingecko import CoinGeckoAPI
-
-# Load variables from .env
-load_dotenv()
 
 def _fetch_with_retry(url: str, headers: dict = None, params: dict = None, max_retries: int = 3) -> dict:
     """
@@ -32,17 +27,14 @@ def _fetch_with_retry(url: str, headers: dict = None, params: dict = None, max_r
 
 def get_bitcoin_price_data(days: int = 30) -> pd.DataFrame:
     """
-    Fetches daily Bitcoin price data using the PyCoinGecko wrapper.
+    Fetches daily Bitcoin price data using Yahoo Finance.
     """
-    api_key = os.getenv("COINGECKO_API_KEY")
-    if not api_key:
-        raise ValueError("CRITICAL: COINGECKO_API_KEY is missing from the environment variables.")
+    btc = yf.Ticker("BTC-USD")
+
+    hist_df = btc.history(period=f"{days}d")
+    hist_df = hist_df.reset_index()
     
-    cg = CoinGeckoAPI(demo_api_key=api_key)
-    
-    data = cg.get_coin_market_chart_by_id(id='bitcoin', vs_currency='usd', days=days)
-    
-    df = pd.DataFrame(data["prices"], columns=["timestamp", "price_usd"])
+    df = hist_df[["Date", "Close"]]
     
     print(f"Bitcoin price data of the last {days} days successfully downloaded.")
     return df

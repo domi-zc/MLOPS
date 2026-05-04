@@ -3,11 +3,14 @@ import pandas as pd
 
 def _normalize_price_data(price_df: pd.DataFrame) -> pd.DataFrame:
     """
-    Normalizes CoinGecko raw millisecond timestamps to standard UTC dates.
+    Normalizes raw Yahoo Finance Dates to standard UTC dates.
     """
-    price_df["date"] = pd.to_datetime(price_df["timestamp"], unit="ms").dt.normalize()
+    price_df = price_df.rename(columns={"Close": "price_usd"})
 
-    return price_df.drop(columns=["timestamp"])
+    price_df["date"] = pd.to_datetime(price_df["Date"])
+    price_df["date"] = price_df["date"].dt.tz_localize(None).dt.normalize()
+    
+    return price_df.drop(columns=["Date"])
 
 
 def _normalize_address_data(addresses_df: pd.DataFrame) -> pd.DataFrame:
