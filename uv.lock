@@ -1323,6 +1323,8 @@ dependencies = [
     { name = "mlflow" },
     { name = "pandas" },
     { name = "pyarrow" },
+    { name = "pycoingecko" },
+    { name = "python-dotenv" },
     { name = "requests" },
     { name = "scikit-learn" },
 ]
@@ -1332,6 +1334,8 @@ requires-dist = [
     { name = "mlflow", specifier = ">=3.11.1" },
     { name = "pandas", specifier = ">=2.3.3" },
     { name = "pyarrow", specifier = ">=23.0.1" },
+    { name = "pycoingecko", specifier = ">=3.2.0" },
+    { name = "python-dotenv", specifier = ">=1.2.2" },
     { name = "requests", specifier = ">=2.33.1" },
     { name = "scikit-learn", specifier = ">=1.8.0" },
 ]
@@ -1929,6 +1933,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/e9/e6/78ebbb10a8c8e4b61a59249394a4a594c1a7af95593dc933a349c8d00964/pyasn1_modules-0.4.2.tar.gz", hash = "sha256:677091de870a80aae844b1ca6134f54652fa2c8c5a52aa396440ac3106e941e6", size = 307892, upload-time = "2025-03-28T02:41:22.17Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/47/8d/d529b5d697919ba8c11ad626e835d4039be708a35b0d22de83a269a6682c/pyasn1_modules-0.4.2-py3-none-any.whl", hash = "sha256:29253a9207ce32b64c3ac6600edc75368f98473906e8fd1043bd6b5b1de2c14a", size = 181259, upload-time = "2025-03-28T02:41:19.028Z" },
+]
+
+[[package]]
+name = "pycoingecko"
+version = "3.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/06/13/2678a9ee00171855290a53b2a661e034f710cf063394d685bb74349a3e0b/pycoingecko-3.2.0.tar.gz", hash = "sha256:c48935d6e608efd9a798cbc4be30f1b43176cb680503dfef8f9352e038fc7605", size = 18002, upload-time = "2024-11-13T00:30:08.201Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7f/94/fd71f6d25daa9d53da60c7bb3adb5a4f6b92d9ec831c3f3ac1309d430db1/pycoingecko-3.2.0-py3-none-any.whl", hash = "sha256:b4fec16e9420b3e2f1ae38ea95710b631c9809cf1bffbf0021cc6608e357925b", size = 10841, upload-time = "2024-11-13T00:30:06.511Z" },
 ]
 
 [[package]]
