@@ -64,15 +64,3 @@ def get_blockchain_metric(metric_name: str, days: int = 30) -> pd.DataFrame:
     
     print(f"Metric '{metric_name}' of the last {days} days successfully downloaded.")
     return df
-
-
-if __name__ == "__main__":    
-    try:
-        price_df = get_bitcoin_price_data(days=5)
-        print(price_df.head())
-        
-        addresses_df = get_blockchain_metric("n-unique-addresses", days=5)
-        print(addresses_df.head())
-        
-    except Exception as e:
-        print(f"\nPipeline failed: {e}")
