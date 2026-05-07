@@ -16,7 +16,8 @@ data/
 *.json
 *.pkl
 *.model
+models/
+*.joblib
 
-# MLflow tracking directory
-mlruns/
-mlruns.db
+# Weights & Biases local logs
+wandb/
