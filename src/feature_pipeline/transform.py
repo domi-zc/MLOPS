@@ -60,6 +60,17 @@ def _engineer_quantitative_features(df: pd.DataFrame) -> pd.DataFrame:
 
     # Calculate smoothed network adoption to remove weekend seasonality.
     df["addresses_7d_ma"] = df["n-unique-addresses"].rolling(window=7).mean()
+
+    # Calculate daily change (Velocity) (How fast are addresses growing/shrinking today?)
+    df["address_change_1d"] = df["n-unique-addresses"].pct_change(periods=1)
+
+    # Calculate weekly momentum (value > 1 means network activity is accelerating)
+    df["address_momentum_7d"] = df["n-unique-addresses"] / df["addresses_7d_ma"]
+
+    # Calculate weekly volatility (Is the network activity stable or chaotic?)
+    df["address_volatility_7d"] = df["address_change_1d"].rolling(window=7).std()
+
+    df = df.drop(columns=["n-unique-addresses", "addresses_7d_ma"], errors="ignore")
     
     return df
 
@@ -96,8 +107,9 @@ def _clean_and_format_schema(df: pd.DataFrame) -> pd.DataFrame:
         "ma_deviation_14d",
         "volatility_7d",
         "momentum_7d",
-        "n-unique-addresses", 
-        "addresses_7d_ma", 
+        "address_change_1d",
+        "address_momentum_7d",
+        "address_volatility_7d",
         "target"
     ]
     
