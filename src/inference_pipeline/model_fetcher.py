@@ -1,0 +1,39 @@
+import joblib
+import wandb
+from pathlib import Path
+
+from src.training_pipeline.metadata import (
+    PROJECT_NAME, 
+    MODEL_ARTIFACT_NAME, 
+    MODEL_FILENAME
+)
+
+class ModelFetcher:
+    def __init__(self):
+        self.project_name = PROJECT_NAME
+        self.artifact_name = MODEL_ARTIFACT_NAME
+
+    def get_champion_model(self) -> tuple:
+        """
+        Downloads the champion model from W&B and returns the model, threshold, and metrics.
+        """
+        print("Connecting to W&B to download Champion model...")
+        
+        api = wandb.Api()
+        artifact = api.artifact(f"{self.project_name}/{self.artifact_name}:champion")
+        
+        metadata = artifact.metadata
+        threshold = metadata.get("optimal_threshold", 0.5)
+        metrics = {
+            "precision": metadata.get("val_precision", 0.0),
+            "accuracy": metadata.get("val_accuracy", 0.0),
+            "f1": metadata.get("val_f1", 0.0)
+        }
+        
+        model_dir = artifact.download()
+        model_path = Path(model_dir) / MODEL_FILENAME
+        
+        model = joblib.load(model_path)
+        print(f"Model loaded successfully. Optimal Threshold: {threshold:.2f}")
+
+        return model, threshold, metrics
