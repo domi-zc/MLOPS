@@ -35,36 +35,36 @@ DEFAULT_CONFIG = {
 }
 
 SWEEP_CONFIG = {
-  "method": "bayes",
-  "metric": {
-    "name": "val_precision",
-    "goal": "maximize"
-  },
-  "parameters": {
-    "max_depth": {
-      "distribution": "int_uniform",
-      "min": 2,
-      "max": 8
+    "method": "bayes",
+    "metric": {
+        "name": "val_precision",
+        "goal": "maximize"
     },
-    "learning_rate": {
-      "distribution": "uniform",
-      "min": 0.01,
-      "max": 0.2
-    },
-    "n_estimators": {
-      "distribution": "int_uniform",
-      "min": 50,
-      "max": 500
-    },
-    "subsample": {
-      "distribution": "uniform",
-      "min": 0.5,
-      "max": 1
-    },
-    "colsample_bytree": {
-      "distribution": "uniform",
-      "min": 0.5,
-      "max": 1
+    "parameters": {
+        "max_depth": {
+            "distribution": "int_uniform",
+            "min": 2,
+            "max": 8
+        },
+        "learning_rate": {
+            "distribution": "uniform",
+            "min": 0.01,
+            "max": 0.2
+        },
+        "n_estimators": {
+            "distribution": "int_uniform",
+            "min": 50,
+            "max": 500
+        },
+        "subsample": {
+            "distribution": "uniform",
+            "min": 0.5,
+            "max": 1
+        },
+        "colsample_bytree": {
+            "distribution": "uniform",
+            "min": 0.5,
+            "max": 1
+        }
     }
-  }
 }

@@ -54,7 +54,7 @@ class WalkForwardTrainer:
             best_fold_threshold = 0.5
             
             for threshold in np.arange(0.5, 0.75, 0.01):
-                y_pred_tuned = (y_probability >= threshold).astype(int) # If y_probability is >= threshold it becomes 1 (Buy), otherwise 0 (Hold)
+                y_pred_tuned = (y_probability >= threshold).astype(int) # If y_probability is >= threshold it becomes 1 (Buy), otherwise 0 (Don't Buy)
 
                 precision = precision_score(np.array(y_fold_val), y_pred_tuned, zero_division=0)
                 recall = recall_score(np.array(y_fold_val), y_pred_tuned, zero_division=0)
