@@ -14,7 +14,7 @@ def get_bitcoin_price_data(days: int = 30) -> pd.DataFrame:
     hist_df = btc.history(period=f"{days}d")
     hist_df = hist_df.reset_index()
     
-    df = hist_df[["Date", "Close"]]
+    df = hist_df[["Date", "Open"]]
     
     print(f"Bitcoin price data of the last {days} days successfully downloaded.")
     return df

@@ -5,7 +5,7 @@ def _normalize_price_data(price_df: pd.DataFrame) -> pd.DataFrame:
     """
     Normalizes raw Yahoo Finance Dates to standard UTC dates.
     """
-    price_df = price_df.rename(columns={"Close": "price_usd"})
+    price_df = price_df.rename(columns={"Open": "price_usd"})
 
     price_df["date"] = pd.to_datetime(price_df["Date"])
     price_df["date"] = price_df["date"].dt.tz_localize(None).dt.normalize()
