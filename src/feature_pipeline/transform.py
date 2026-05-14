@@ -91,7 +91,7 @@ def _create_target_variable(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def _clean_and_format_schema(df: pd.DataFrame) -> pd.DataFrame:
+def _clean_and_format_schema(df: pd.DataFrame, is_live: bool = False) -> pd.DataFrame:
     """
     Removes invalid data points and enforces the final Feature Store column order.
     """
@@ -109,14 +109,16 @@ def _clean_and_format_schema(df: pd.DataFrame) -> pd.DataFrame:
         "momentum_7d",
         "address_change_1d",
         "address_momentum_7d",
-        "address_volatility_7d",
-        "target"
+        "address_volatility_7d"
     ]
     
+    if not is_live:
+        final_columns.append("target")
+        
     return df[final_columns]
 
 
-def transform_data(price_df: pd.DataFrame, addresses_df: pd.DataFrame) -> pd.DataFrame:
+def transform_data(price_df: pd.DataFrame, addresses_df: pd.DataFrame, is_live: bool = False) -> pd.DataFrame:
     """
     Main orchestrator function for the transformation layer.
     Transforms raw extraction data into clean, ML-ready features.
@@ -128,8 +130,11 @@ def transform_data(price_df: pd.DataFrame, addresses_df: pd.DataFrame) -> pd.Dat
     
     df = _merge_and_handle_lag(price_df, addresses_df)
     df = _engineer_quantitative_features(df)
-    df = _create_target_variable(df)
-    df = _clean_and_format_schema(df)
-    
+
+    if not is_live:
+        df = _create_target_variable(df)
+
+    df = _clean_and_format_schema(df, is_live)
+
     print(f"Transformation complete. Generated {len(df)} ready-to-train rows.")
     return df
