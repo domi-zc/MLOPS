@@ -18,6 +18,7 @@ data/
 *.model
 models/
 *.joblib
+artifacts/
 
 # Weights & Biases local logs
 wandb/
