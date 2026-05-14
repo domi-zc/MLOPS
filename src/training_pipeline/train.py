@@ -1,4 +1,3 @@
-import os
 import argparse
 import joblib
 import wandb
@@ -14,7 +13,7 @@ from src.training_pipeline.metadata import (
     SWEEP_CONFIG
 )
 
-os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
+MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 def main():
     run = wandb.init(
