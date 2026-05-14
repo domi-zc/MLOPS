@@ -20,7 +20,7 @@ def get_bitcoin_price_data(days: int = 30) -> pd.DataFrame:
     return df
 
 
-def get_blockchain_metric(days: int = 30) -> pd.DataFrame:
+def get_bitcoin_active_addresses(days: int = 30) -> pd.DataFrame:
     """
     Fetches daily on-chain metrics using the official CoinMetricsClient.
     """

@@ -1,7 +1,7 @@
 import pandas as pd
 
 from pathlib import Path
-from src.feature_pipeline.extract import get_bitcoin_price_data, get_blockchain_metric
+from src.feature_pipeline.extract import get_bitcoin_price_data, get_bitcoin_active_addresses
 from src.feature_pipeline.transform import transform_data
 
 def save_to_feature_store(df: pd.DataFrame, file_path: str = "data/feature_store.parquet") -> None:
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     try:
         print("\n--- Running Extract ---")
         raw_price_df = get_bitcoin_price_data(days=3650)
-        raw_address_df = get_blockchain_metric(days=3650)
+        raw_address_df = get_bitcoin_active_addresses(days=3650)
         
         print("\n--- Running Transform ---")
         final_feature_df = transform_data(raw_price_df, raw_address_df)
