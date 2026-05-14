@@ -8,7 +8,8 @@ PROJECT_NAME = "bitcoin-on-chain-prediction"
 MODEL_ARTIFACT_NAME = "xgboost-sniper-bot"
 
 FEATURE_PATH = Path("data/feature_store.parquet")
-MODEL_PATH = Path("models/xgboost_model.joblib")
+MODEL_FILENAME = "xgboost_model.joblib"
+MODEL_PATH = Path("models") / MODEL_FILENAME
 
 FEATURE_COLS = [
     "price_usd",
