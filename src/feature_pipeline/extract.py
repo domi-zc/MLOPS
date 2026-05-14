@@ -20,7 +20,7 @@ def get_bitcoin_price_data(days: int = 30) -> pd.DataFrame:
     return df
 
 
-def get_blockchain_metric(metric_name: str = "AdrActCnt", days: int = 30) -> pd.DataFrame:
+def get_blockchain_metric(days: int = 30) -> pd.DataFrame:
     """
     Fetches daily on-chain metrics using the official CoinMetricsClient.
     """
@@ -29,11 +29,11 @@ def get_blockchain_metric(metric_name: str = "AdrActCnt", days: int = 30) -> pd.
     
     metric_data = client.get_asset_metrics(
         assets='btc',
-        metrics=metric_name,
+        metrics='AdrActCnt',
         start_time=start_date
     )
     
     df = metric_data.to_dataframe()
     
-    print(f"Metric '{metric_name}' successfully downloaded. Total rows: {len(df)}.")
+    print(f"Metric 'AdrActCnt' successfully downloaded. Total rows: {len(df)}.")
     return df
