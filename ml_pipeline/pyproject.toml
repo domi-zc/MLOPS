@@ -1,15 +1,15 @@
 [project]
-name = "mlops"
+name = "ml-pipeline"
 version = "0.1.0"
-description = "An automated MLOps pipeline predicting short-term Bitcoin price direction using dynamic on-chain data."
-readme = "README.md"
+description = "Automated MLOps pipeline for data ingestion, feature engineering, and model training."
 authors = [
     { name = "Dominic Zybach", email = "dominic.zybach@gmail.com" }
 ]
 requires-python = ">=3.11"
 dependencies = [
     "coinmetrics-api-client>=2026.4.30.17",
-    "fastapi[standard]>=0.136.1",
+    "joblib>=1.5.3",
+    "numpy>=2.4.4",
     "pandas>=2.3.3",
     "pyarrow>=23.0.1",
     "python-dotenv>=1.2.2",
