@@ -2,7 +2,7 @@ import joblib
 import wandb
 from pathlib import Path
 
-from src.training_pipeline.metadata import (
+from ml_pipeline.training_pipeline.metadata import (
     PROJECT_NAME, 
     MODEL_ARTIFACT_NAME, 
     MODEL_FILENAME

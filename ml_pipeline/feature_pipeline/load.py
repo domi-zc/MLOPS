@@ -1,8 +1,8 @@
 import pandas as pd
 
 from pathlib import Path
-from src.feature_pipeline.extract import get_bitcoin_price_data, get_bitcoin_active_addresses
-from src.feature_pipeline.transform import transform_data
+from ml_pipeline.feature_pipeline.extract import get_bitcoin_price_data, get_bitcoin_active_addresses
+from ml_pipeline.feature_pipeline.transform import transform_data
 
 def save_to_feature_store(df: pd.DataFrame, file_path: str = "data/feature_store.parquet") -> None:
     """

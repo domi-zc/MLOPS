@@ -2,9 +2,9 @@ import argparse
 import joblib
 import wandb
 
-from src.training_pipeline.data_builder import TrainingDataBuilder
-from src.training_pipeline.model_trainer import WalkForwardTrainer
-from src.training_pipeline.metadata import (
+from ml_pipeline.training_pipeline.data_builder import TrainingDataBuilder
+from ml_pipeline.training_pipeline.model_trainer import WalkForwardTrainer
+from ml_pipeline.training_pipeline.metadata import (
     PROJECT_NAME,
     MODEL_ARTIFACT_NAME,
     MODEL_PATH,

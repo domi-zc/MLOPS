@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.training_pipeline.metadata import FEATURE_PATH, FEATURE_COLS, TARGET_COL
+from ml_pipeline.training_pipeline.metadata import FEATURE_PATH, FEATURE_COLS, TARGET_COL
 
 class TrainingDataBuilder:
     def __init__(self, test_size: float = 0.15):

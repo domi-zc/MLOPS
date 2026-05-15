@@ -1,8 +1,8 @@
 import pandas as pd
 
-from src.feature_pipeline.extract import get_bitcoin_price_data, get_bitcoin_active_addresses
-from src.feature_pipeline.transform import transform_data
-from src.training_pipeline.metadata import FEATURE_COLS
+from ml_pipeline.feature_pipeline.extract import get_bitcoin_price_data, get_bitcoin_active_addresses
+from ml_pipeline.feature_pipeline.transform import transform_data
+from ml_pipeline.training_pipeline.metadata import FEATURE_COLS
 
 class LiveDataFetcher:
     def __init__(self):
