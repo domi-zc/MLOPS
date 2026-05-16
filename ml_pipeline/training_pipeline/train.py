@@ -47,7 +47,10 @@ def main():
             metadata={
                 "features": FEATURE_COLS,
                 "optimal_threshold": val_metrics["optimal_threshold"],
+                "val_accuracy": val_metrics["val_accuracy"],
                 "val_precision": val_metrics["val_precision"],
+                "val_recall": val_metrics["val_recall"],
+                "val_f1": val_metrics["val_f1"],
                 "trained_on": "100_percent_all_data"
             }
         )
