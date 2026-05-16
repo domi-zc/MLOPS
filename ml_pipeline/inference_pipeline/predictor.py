@@ -16,10 +16,10 @@ class BitcoinPredictor:
         prediction = 1 if probability >= self.threshold else 0
         
         result = {
-            "prediction": "BUY" if prediction == 1 else "DON'T BUY",
+            "prediction": prediction,
             "probability": float(round(probability * 100, 2)),
-            "threshold_used": float(round(self.threshold * 100, 2)),
-            "model_precision": float(round(self.metrics.get("precision", 0) * 100, 2))
+            "threshold": float(round(self.threshold * 100, 2)),
+            "precision": float(round(self.metrics.get("precision", 0) * 100, 2))
         }
         
         return result
