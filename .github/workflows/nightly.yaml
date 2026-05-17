@@ -13,7 +13,8 @@ jobs:
       WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
       GCS_ACCESS_KEY: ${{ secrets.GCS_ACCESS_KEY }}
       GCS_SECRET_KEY: ${{ secrets.GCS_SECRET_KEY }}
-      STORAGE_MODE: "cloud"
+      GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
+      STORAGE_MODE: ${{ vars.STORAGE_MODE }}
 
     steps:
       - name: Checkout Repository
