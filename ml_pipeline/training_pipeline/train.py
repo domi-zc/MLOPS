@@ -4,7 +4,7 @@ import wandb
 
 from ml_pipeline.training_pipeline.data_builder import TrainingDataBuilder
 from ml_pipeline.training_pipeline.model_trainer import WalkForwardTrainer
-from ml_pipeline.training_pipeline.metadata import (
+from ml_pipeline.config.model_data import (
     PROJECT_NAME,
     MODEL_ARTIFACT_NAME,
     MODEL_PATH,

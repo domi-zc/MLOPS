@@ -7,7 +7,6 @@ load_dotenv()
 PROJECT_NAME = "bitcoin-on-chain-prediction"
 MODEL_ARTIFACT_NAME = "xgboost-sniper-bot"
 
-FEATURE_PATH = Path("data/feature_store.parquet")
 MODEL_FILENAME = "xgboost_model.joblib"
 MODEL_PATH = Path("models") / MODEL_FILENAME
 
@@ -26,11 +25,11 @@ TARGET_COL = "target"
 
 DEFAULT_CONFIG = {
     "model_type": "xgboost",
-    "max_depth": 2, # How deep the trees can grow
-    "learning_rate": 0.118, # How aggressively each tree fixes mistakes
-    "n_estimators": 64, # Total number of trees
-    "subsample": 0.525, # Percentage of historical days used per tree (prevents memorizing the chart / overfitting)
-    "colsample_bytree": 0.799, # Percentage of features used per tree
+    "max_depth": 5, # How deep the trees can grow
+    "learning_rate": 0.0141, # How aggressively each tree fixes mistakes
+    "n_estimators": 82, # Total number of trees
+    "subsample": 0.5802, # Percentage of historical days used per tree (prevents memorizing the chart / overfitting)
+    "colsample_bytree": 0.9693, # Percentage of features used per tree
     "test_size": 0.15
 }
 

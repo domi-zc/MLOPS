@@ -1,8 +1,8 @@
 import joblib
 import wandb
-from pathlib import Path
 
-from ml_pipeline.training_pipeline.metadata import (
+from pathlib import Path
+from ml_pipeline.config.model_data import (
     PROJECT_NAME, 
     MODEL_ARTIFACT_NAME, 
     MODEL_FILENAME
