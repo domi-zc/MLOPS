@@ -9,6 +9,12 @@ jobs:
   run-pipeline:
     runs-on: ubuntu-latest
 
+    env:
+      WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+      GCS_ACCESS_KEY: ${{ secrets.GCS_ACCESS_KEY }}
+      GCS_SECRET_KEY: ${{ secrets.GCS_SECRET_KEY }}
+      STORAGE_MODE: ${{ vars.STORAGE_MODE }
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -26,8 +32,6 @@ jobs:
 
       - name: Run Monitoring Pipeline
         id: monitor_step
-        env:
-          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
         run: make monitoring-pipeline
 
       - name: Trigger Emergency Sweep (If Drifted)
@@ -40,8 +44,6 @@ jobs:
 
       - name: Run Training Pipeline
         if: steps.monitor_step.outputs.drift_detected != 'true'
-        env:
-          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
         run: make training-pipeline
 
       - name: Trigger Model Refresh on VPS
