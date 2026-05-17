@@ -1,0 +1,23 @@
+name: Hyperparameter Sweep Training
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  rescue-model:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: astral-sh/setup-uv@v3
+
+      - name: Run Sweep Training
+        env:
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+        run: make training-pipeline ARGS="--sweep --count 10"
