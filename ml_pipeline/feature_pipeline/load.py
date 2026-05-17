@@ -3,18 +3,18 @@ import pandas as pd
 from pathlib import Path
 from ml_pipeline.feature_pipeline.extract import get_bitcoin_price_data, get_bitcoin_active_addresses
 from ml_pipeline.feature_pipeline.transform import transform_data
+from ml_pipeline.config.storage_data import FEATURE_PATH, get_storage_options
 
-def save_to_feature_store(df: pd.DataFrame, file_path: str = "data/feature_store.parquet") -> None:
+def save_to_feature_store(df: pd.DataFrame) -> None:
     """
-    Saves the transformed DataFrame to a local Parquet file.
-    Acts as a local Feature Store by appending new data and preventing duplicates.
+    Saves the transformed DataFrame to the configured Feature Store (Local or Cloud).
+    Acts as a Feature Store by appending new data and preventing duplicates.
     """
-    path = Path(file_path)
-    path.parent.mkdir(parents=True, exist_ok=True)
+    options = get_storage_options()
     
-    if path.exists():
-        print(f"Found existing feature store at '{file_path}'. Merging new data...")
-        existing_df = pd.read_parquet(path)
+    try:
+        print(f"Found existing feature store at '{FEATURE_PATH}'. Merging new data...")
+        existing_df = pd.read_parquet(FEATURE_PATH, storage_options=options)
         
         combined_df = pd.concat([existing_df, df])
         combined_df = combined_df.drop_duplicates(subset=["date"], keep="last")
@@ -22,13 +22,13 @@ def save_to_feature_store(df: pd.DataFrame, file_path: str = "data/feature_store
         
         print(f"Merged successfully. Feature store now contains {len(combined_df)} total rows.")
         
-    else:
-        print(f"No existing feature store found. Creating a new one at '{file_path}'...")
+    except Exception:
+        print(f"No existing feature store found. Creating a new one at '{FEATURE_PATH}'...")
         combined_df = df.sort_values(by="date").reset_index(drop=True)
         print(f"Created new feature store with {len(combined_df)} rows.")
 
-    combined_df.to_parquet(path, index=False)
-    print("Data safely written to disk.")
+    combined_df.to_parquet(FEATURE_PATH, index=False, storage_options=options)
+    print("Data safely written to storage.")
 
 
 if __name__ == "__main__":    

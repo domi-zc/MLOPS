@@ -1,6 +1,7 @@
 import pandas as pd
 
-from ml_pipeline.training_pipeline.metadata import FEATURE_PATH, FEATURE_COLS, TARGET_COL
+from ml_pipeline.config.storage_data import FEATURE_PATH, get_storage_options
+from ml_pipeline.config.model_data import FEATURE_COLS, TARGET_COL
 
 class TrainingDataBuilder:
     def __init__(self, test_size: float = 0.15):
@@ -11,12 +12,15 @@ class TrainingDataBuilder:
         Loads the Parquet file and splits it chronologically.
         Returns the historical chunk (for Walk-Forward) and the future chunk (Test).
         """
-        print("Loading data from Feature Store...")
-        
-        if not FEATURE_PATH.exists():
-            raise FileNotFoundError(f"Could not find {FEATURE_PATH}.")
+        print(f"Loading data from Feature Store at {FEATURE_PATH}...")
+
+        options = get_storage_options()
+
+        try:
+            df = pd.read_parquet(FEATURE_PATH, storage_options=options)
+        except Exception as e:
+            raise FileNotFoundError(f"CRITICAL: Could not find or access {FEATURE_PATH}. Error: {e}")
             
-        df = pd.read_parquet(FEATURE_PATH)
         df = df.sort_values("date").reset_index(drop=True)
         df = df.dropna(subset=FEATURE_COLS + [TARGET_COL]) # Remove any row containing a singular NaN. Prevents XGBoost from crashing
         
