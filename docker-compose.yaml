@@ -1,0 +1,28 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.backend
+    container_name: bitcoin-ml-api
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - sniper_net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    container_name: bitcoin-ml-ui
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - sniper_net
+
+networks:
+  sniper_net:
+    driver: bridge

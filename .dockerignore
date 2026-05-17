@@ -1,0 +1,18 @@
+# Git
+.git
+.gitignore
+
+# Python Environments
+**/.venv
+**/__pycache__
+**/*.pyc
+
+# ML Caches, Logs & Local Models
+**/wandb/
+**/artifacts/
+**/models/
+**/data/
+**/*.parquet
+
+# Frontend
+frontend/
