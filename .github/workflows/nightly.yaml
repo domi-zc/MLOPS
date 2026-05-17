@@ -1,0 +1,49 @@
+name: Nightly Pipeline Run
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v2
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Run Feature Pipeline
+        run: make feature-pipeline
+
+      - name: Run Monitoring Pipeline
+        id: monitor_step
+        env:
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+        run: make monitoring-pipeline
+
+      - name: Trigger Emergency Sweep (If Drifted)
+        if: steps.monitor_step.outputs.drift_detected == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Drift detected. Triggering the Sweep workflow."
+          gh workflow run sweep.yaml
+
+      - name: Run Training Pipeline
+        if: steps.monitor_step.outputs.drift_detected != 'true'
+        env:
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+        run: make training-pipeline
+
+      - name: Trigger Model Refresh on VPS
+        run: |
+          curl -X POST http://${{ vars.VPS_IP }}/api/refresh-model
