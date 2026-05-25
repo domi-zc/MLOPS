@@ -1,12 +1,17 @@
 .PHONY: feature-pipeline
 feature-pipeline:
 	@echo "Starting Feature Pipeline..."
-	uv run python -m ml_pipeline.feature_pipeline.load
+	uv run --extra pipeline python -m ml_pipeline.feature_pipeline.load
 
 .PHONY: training-pipeline
 training-pipeline:
 	@echo "Starting Training Pipeline..."
-	uv run python -m ml_pipeline.training_pipeline.train $(ARGS)
+	uv run --extra pipeline python -m ml_pipeline.training_pipeline.train $(ARGS)
+
+.PHONY: training-champion
+training-champion:
+	@echo "Starting Champion Selection..."
+	uv run --extra pipeline python -m ml_pipeline.training_pipeline.select_champion
 
 .PHONY: inference-pipeline
 inference-pipeline:
