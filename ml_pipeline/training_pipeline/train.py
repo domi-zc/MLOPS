@@ -5,7 +5,7 @@ import wandb
 from ml_pipeline.training_pipeline.data_builder import TrainingDataBuilder
 from ml_pipeline.training_pipeline.model_trainer import WalkForwardTrainer
 from ml_pipeline.config.model_data import (
-    PROJECT_NAME,
+    WANDB_PROJECT_NAME,
     MODEL_ARTIFACT_NAME,
     MODEL_PATH,
     FEATURE_COLS,
@@ -17,7 +17,7 @@ MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 def main():
     run = wandb.init(
-        project=PROJECT_NAME,
+        project=WANDB_PROJECT_NAME,
         job_type="train",
         config=DEFAULT_CONFIG
     )
@@ -73,7 +73,7 @@ if __name__ == "__main__":
 
     if args.sweep:
         print(f"Initializing Bayesian Sweep for {args.count} runs...")
-        sweep_id = wandb.sweep(sweep=SWEEP_CONFIG, project=PROJECT_NAME)
+        sweep_id = wandb.sweep(sweep=SWEEP_CONFIG, project=WANDB_PROJECT_NAME)
         wandb.agent(sweep_id, function=main, count=args.count)
     else:
         print("Executing single production run...")

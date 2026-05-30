@@ -3,14 +3,14 @@ import wandb
 
 from pathlib import Path
 from ml_pipeline.config.model_data import (
-    PROJECT_NAME, 
+    WANDB_PROJECT_NAME, 
     MODEL_ARTIFACT_NAME, 
     MODEL_FILENAME
 )
 
 class ModelFetcher:
     def __init__(self):
-        self.project_name = PROJECT_NAME
+        self.WANDB_PROJECT_NAME = WANDB_PROJECT_NAME
         self.artifact_name = MODEL_ARTIFACT_NAME
 
     def get_champion_model(self) -> tuple:
@@ -20,7 +20,7 @@ class ModelFetcher:
         print("Connecting to W&B to download Champion model...")
         
         api = wandb.Api()
-        artifact = api.artifact(f"{self.project_name}/{self.artifact_name}:champion")
+        artifact = api.artifact(f"{self.WANDB_PROJECT_NAME}/{self.artifact_name}:champion")
         
         metadata = artifact.metadata
         threshold = metadata.get("optimal_threshold", 0.5)

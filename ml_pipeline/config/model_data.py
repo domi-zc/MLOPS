@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-PROJECT_NAME = "bitcoin-on-chain-prediction"
+WANDB_PROJECT_NAME = "bitcoin-on-chain-prediction"
 MODEL_ARTIFACT_NAME = "xgboost-sniper-bot"
 
 MODEL_FILENAME = "xgboost_model.joblib"
