@@ -13,6 +13,8 @@ jobs:
 
     env:
       WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+      WANDB_ENTITY: ${{ secrets.WANDB_ENTITY }}
+      SWEEP_ID: ${{ steps.training_step.outputs.sweep_id }}
       GCS_ACCESS_KEY: ${{ secrets.GCS_ACCESS_KEY }}
       GCS_SECRET_KEY: ${{ secrets.GCS_SECRET_KEY }}
       GCS_BUCKET_NAME: ${{ vars.GCS_BUCKET_NAME }}
@@ -26,4 +28,10 @@ jobs:
         uses: astral-sh/setup-uv@v3
 
       - name: Run Sweep Training
-        run: make training-pipeline ARGS="--sweep --count 10"
+        run: make training-pipeline ARGS="--sweep --count 200"
+
+      - name: Pick Champion
+        run: make select-champion
+
+      - name: Train Final Champion Model
+        run: make training-pipeline

@@ -1,7 +1,11 @@
 import argparse
 import joblib
 import wandb
+import os
+import json
+import dotenv
 
+from pathlib import Path
 from ml_pipeline.training_pipeline.data_builder import TrainingDataBuilder
 from ml_pipeline.training_pipeline.model_trainer import WalkForwardTrainer
 from ml_pipeline.config.model_data import (
@@ -16,10 +20,20 @@ from ml_pipeline.config.model_data import (
 MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 def main():
+    config_path = os.path.join("models", "best_config.json")
+    
+    if os.path.exists(config_path):
+        print(f"Found {config_path}! Using optimized sweep hyperparameters...")
+        with open(config_path, "r") as f:
+            config_to_use = json.load(f)
+    else:
+        config_to_use = DEFAULT_CONFIG
+        print("No sweep config found. Using DEFAULT_CONFIG...")
+
     run = wandb.init(
         project=WANDB_PROJECT_NAME,
         job_type="train",
-        config=DEFAULT_CONFIG
+        config=config_to_use
     )
     
     training_data_builder = TrainingDataBuilder(test_size=run.config.get("test_size", 0.15))
@@ -36,6 +50,7 @@ def main():
     if is_sweep:
         print("Sweep Run Detected. Skipping production training and model registry.")
     else:
+        print("Executing final production training on 100% of data...")
         X_all, y_all = training_data_builder.get_all_data(X_train_val, y_train_val, X_test, y_test)
         final_model = trainer.train_production_model(X_all, y_all)
 
@@ -74,6 +89,21 @@ if __name__ == "__main__":
     if args.sweep:
         print(f"Initializing Bayesian Sweep for {args.count} runs...")
         sweep_id = wandb.sweep(sweep=SWEEP_CONFIG, project=WANDB_PROJECT_NAME)
+        
+        github_env_path = os.getenv("GITHUB_ENV")
+        
+        if github_env_path:
+            with open(github_env_path, "a") as f:
+                f.write(f"SWEEP_ID={sweep_id}\n")
+            print(f"Successfully injected SWEEP_ID={sweep_id} into GitHub Actions environment.")
+
+        else:
+            env_path = Path(".env")
+            env_path.touch(exist_ok=True)
+            dotenv.set_key(env_path, "SWEEP_ID", sweep_id)
+            
+            print(f"\nSuccessfully wrote SWEEP_ID={sweep_id} to your .env file!")
+
         wandb.agent(sweep_id, function=main, count=args.count)
     else:
         print("Executing single production run...")

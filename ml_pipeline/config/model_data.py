@@ -23,6 +23,8 @@ FEATURE_COLS = [
 ]
 TARGET_COL = "target"
 
+MIN_RECALL_THRESHOLD = 0.27
+
 DEFAULT_CONFIG = {
     "model_type": "xgboost",
     "max_depth": 5, # How deep the trees can grow
