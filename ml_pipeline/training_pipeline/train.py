@@ -88,7 +88,14 @@ if __name__ == "__main__":
 
     if args.sweep:
         print(f"Initializing Bayesian Sweep for {args.count} runs...")
-        sweep_id = wandb.sweep(sweep=SWEEP_CONFIG, project=WANDB_PROJECT_NAME)
+
+        wandb_entity = os.getenv("WANDB_ENTITY")
+    
+        sweep_id = wandb.sweep(
+            sweep=SWEEP_CONFIG, 
+            project=WANDB_PROJECT_NAME, 
+            entity=wandb_entity
+        )
         
         github_env_path = os.getenv("GITHUB_ENV")
         
