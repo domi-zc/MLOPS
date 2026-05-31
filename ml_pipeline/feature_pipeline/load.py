@@ -1,4 +1,5 @@
 import pandas as pd
+import argparse
 
 from pathlib import Path
 from ml_pipeline.feature_pipeline.extract import get_bitcoin_price_data, get_bitcoin_active_addresses
@@ -32,10 +33,23 @@ def save_to_feature_store(df: pd.DataFrame) -> None:
 
 
 if __name__ == "__main__":    
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--backfill", action="store_true")
+    args = parser.parse_args()
+
+    if args.backfill:
+        start_date = "2014-09-17"
+        days_to_fetch = None
+        print(f"\n--- Running Extract: BACKFILL (Since {start_date}) ---")
+    else:
+        start_date = None
+        days_to_fetch = 30
+        print("\n--- Running Extract: INCREMENTAL (30 Days) ---")
+
     try:
-        print("\n--- Running Extract ---")
-        raw_price_df = get_bitcoin_price_data(days=3650)
-        raw_address_df = get_bitcoin_active_addresses(days=3650)
+        raw_price_df = get_bitcoin_price_data(start_date=start_date, days=days_to_fetch)
+        raw_address_df = get_bitcoin_active_addresses(start_date=start_date, days=days_to_fetch)
         
         print("\n--- Running Transform ---")
         final_feature_df = transform_data(raw_price_df, raw_address_df)

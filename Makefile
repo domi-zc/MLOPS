@@ -1,7 +1,12 @@
 .PHONY: feature-pipeline
 feature-pipeline:
-	@echo "Starting Feature Pipeline..."
+	@echo "Starting Daily Feature Pipeline (30 Days)..."
 	uv run --extra pipeline python -m ml_pipeline.feature_pipeline.load
+
+.PHONY: backfill
+backfill:
+	@echo "Starting Historical Backfill..."
+	uv run --extra pipeline python -m ml_pipeline.feature_pipeline.load --backfill
 
 .PHONY: training-pipeline
 training-pipeline:
