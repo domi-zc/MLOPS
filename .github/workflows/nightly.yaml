@@ -46,12 +46,3 @@ jobs:
         run: |
           echo "Drift detected. Triggering the Sweep workflow."
           gh workflow run sweep.yaml
-
-      - name: Run Training Pipeline
-        if: steps.monitor_step.outputs.drift_detected != 'true'
-        run: make training-pipeline
-
-      - name: Trigger Model Refresh on VPS
-        if: steps.monitor_step.outputs.drift_detected != 'true'
-        run: |
-          curl -X POST http://${{ vars.VPS_IP }}/api/refresh-model
