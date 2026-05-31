@@ -1,17 +1,11 @@
 import pandas as pd
-from pathlib import Path
-from tqdm import tqdm
 
-from ml_pipeline.config.storage_data import FEATURE_PATH, PREDICTION_PATH, get_storage_options
-from ml_pipeline.config.model_data import (
-    FEATURE_COLS,
-    TARGET_COL,
-    DEFAULT_CONFIG
-)
-from ml_pipeline.training_pipeline.model_trainer import WalkForwardTrainer
+from ml_pipeline.inference_pipeline.model_fetcher import ModelFetcher
+from ml_pipeline.config.storage_data import FEATURE_PATH, get_prediction_path, get_storage_options
+from ml_pipeline.config.model_data import FEATURE_COLS
 
-def run_honest_backtest(days_to_simulate=300):
-    print(f"Starting Honest Walk-Forward Backtest for the last {days_to_simulate} days...")
+def run_backfill_predictions(days_to_simulate=60):
+    print(f"Starting Prediction Backfill for the last {days_to_simulate} days...")
     
     options = get_storage_options()
     
@@ -22,43 +16,34 @@ def run_honest_backtest(days_to_simulate=300):
         return
     
     if len(df) <= days_to_simulate:
-        print("Not enough data to run simulation.")
+        print("Not enough data to run backfill.")
         return
 
-    past_df = df.iloc[:-days_to_simulate].copy()
     future_df = df.iloc[-days_to_simulate:].copy()
 
-    log_entries = []
+    model_fetcher = ModelFetcher()
+    model, threshold, metrics = model_fetcher.get_champion_model()
+    current_version = metrics.get("version", "v0")
 
-    for index, row in tqdm(future_df.iterrows(), total=days_to_simulate):
-        X_train = past_df[FEATURE_COLS]
-        y_train = past_df[TARGET_COL]
-        
-        trainer = WalkForwardTrainer(config=DEFAULT_CONFIG)
-        val_metrics = trainer.run_cross_validation(X_train, y_train)
-        threshold = val_metrics["optimal_threshold"]
-        
-        model = trainer._build_model()
-        model.fit(X_train, y_train)
-        
-        X_today = pd.DataFrame([row[FEATURE_COLS]])
-        probability = model.predict_proba(X_today)[:, 1][0]
-        prediction = 1 if probability >= threshold else 0
-        
-        log_entries.append({
-            "date": row["date"],
-            "prediction": prediction,
-            "probability": float(probability)
-        })
-        
-        past_df = pd.concat([past_df, pd.DataFrame([row])]).reset_index(drop=True)
+    print(f"Generating baseline predictions using {current_version}...")
 
-    log_df = pd.DataFrame(log_entries)
-
-    print(f"Uploading backtest log to {PREDICTION_PATH}...")
-    log_df.to_parquet(PREDICTION_PATH, index=False, storage_options=options)
+    X_batch = future_df[FEATURE_COLS]
+    probabilities = model.predict_proba(X_batch)[:, 1]
     
-    print(f"\nHonest Backtest Complete! Saved {len(log_df)} predictions.")
+    predictions = (probabilities >= threshold).astype(int) 
+
+    log_df = pd.DataFrame({
+        "date": future_df["date"],
+        "prediction": predictions,
+        "probability": probabilities
+    })
+
+    log_path = get_prediction_path(current_version)
+
+    print(f"Uploading backfill log to {log_path}...")
+    log_df.to_parquet(log_path, index=False, storage_options=options)
+    
+    print(f"\nBackfill Complete! Saved {len(log_df)} predictions for {current_version}.")
 
 if __name__ == "__main__":
-    run_honest_backtest()
+    run_backfill_predictions()
