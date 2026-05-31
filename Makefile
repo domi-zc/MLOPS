@@ -1,3 +1,5 @@
+START_DATE ?= 2016-06-01
+
 .PHONY: feature-pipeline
 feature-pipeline:
 	@echo "Starting Daily Feature Pipeline (30 Days)..."
@@ -5,8 +7,8 @@ feature-pipeline:
 
 .PHONY: backfill
 backfill:
-	@echo "Starting Historical Backfill..."
-	uv run --extra pipeline python -m ml_pipeline.feature_pipeline.load --backfill
+	@echo "Starting Historical Backfill from $(START_DATE)..."
+	uv run --extra pipeline python -m ml_pipeline.feature_pipeline.load --backfill --start-date $(START_DATE)
 
 .PHONY: sweep-training
 sweep-training:

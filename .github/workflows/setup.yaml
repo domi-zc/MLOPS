@@ -4,6 +4,12 @@ name: Project Setup
 
 on:
   workflow_dispatch:
+    inputs:
+      start_date:
+        description: 'Backfill Start Date (YYYY-MM-DD). Do not enter a date before 2014-09-17 (No data exists prior)!'
+        required: true
+        default: '2016-06-01'
+        type: string
 
 permissions:
   contents: write
@@ -27,7 +33,7 @@ jobs:
         uses: astral-sh/setup-uv@v3
 
       - name: Historical Backfill
-        run: make backfill
+        run: make backfill START_DATE=${{ github.event.inputs.start_date }}
 
   trigger-sweep:
     needs: genesis-backfill

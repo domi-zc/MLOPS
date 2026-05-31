@@ -5,6 +5,7 @@ from pathlib import Path
 from ml_pipeline.feature_pipeline.extract import get_bitcoin_price_data, get_bitcoin_active_addresses
 from ml_pipeline.feature_pipeline.transform import transform_data
 from ml_pipeline.config.storage_data import FEATURE_PATH, get_storage_options
+from ml_pipeline.utils.date_validator import validate_start_date
 
 def save_to_feature_store(df: pd.DataFrame) -> None:
     """
@@ -31,15 +32,14 @@ def save_to_feature_store(df: pd.DataFrame) -> None:
     combined_df.to_parquet(FEATURE_PATH, index=False, storage_options=options)
     print("Data safely written to storage.")
 
-
-if __name__ == "__main__":    
-    import argparse
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--backfill", action="store_true")
+    parser.add_argument("--start-date", type=str, default="2016-06-01")
     args = parser.parse_args()
 
     if args.backfill:
-        start_date = "2016-06-01"
+        start_date = validate_start_date(args.start_date)
         days_to_fetch = None
         print(f"\n--- Running Extract: BACKFILL (Since {start_date}) ---")
     else:
