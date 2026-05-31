@@ -1,6 +1,6 @@
 name: Project Setup
 # This workflow is intended for the start of the project.
-# It does a backfill, sweep trains, picks a champion, trains the champion, makes predictions, and if the backend is already online, hot-swaps the model.
+# It does a backfill, sweep trains, picks champion, turns champion into artifact, makes predictions and if backend is already online, hot-swaps the model.
 
 on:
   workflow_dispatch:
@@ -10,12 +10,10 @@ permissions:
   actions: write
 
 jobs:
-  genesis-run:
+  genesis-backfill:
     runs-on: ubuntu-latest
-
+    
     env:
-      WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
-      WANDB_ENTITY: ${{ secrets.WANDB_ENTITY }}
       GCS_ACCESS_KEY: ${{ secrets.GCS_ACCESS_KEY }}
       GCS_SECRET_KEY: ${{ secrets.GCS_SECRET_KEY }}
       GCS_BUCKET_NAME: ${{ vars.GCS_BUCKET_NAME }}
@@ -31,18 +29,7 @@ jobs:
       - name: Historical Backfill
         run: make backfill
 
-      - name: Run Sweep Training
-        run: make training-pipeline ARGS="--sweep --count 200"
-
-      - name: Pick Champion
-        run: make select-champion
-
-      - name: Train Final Champion Model
-        run: make training-pipeline
-        
-      - name: Fill in Monitor Predictions
-        run: make backfill-predictions
-
-      - name: Trigger Model Refresh on VPS
-        run: |
-          curl -f -X POST http://${{ vars.VPS_IP }}/backend-api/refresh-model || echo "VPS not reachable. Skipping hot-swap."
+  trigger-sweep:
+    needs: genesis-backfill
+    uses: ./.github/workflows/sweep.yaml
+    secrets: inherit
