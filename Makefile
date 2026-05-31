@@ -23,6 +23,11 @@ inference-pipeline:
 	@echo "Starting Inference Test..."
 	uv run python -m ml_pipeline.inference_pipeline.predictor
 
+.PHONY: backfill-predictions
+backfill-predictions:
+	@echo "Starting Prediction Backfill..."
+	uv run python -m ml_pipeline.inference_pipeline.backfill_predictions
+
 .PHONY: monitoring-pipeline
 monitoring-pipeline:
 	@echo "Starting Monitoring Pipeline..."
