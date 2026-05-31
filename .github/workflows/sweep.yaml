@@ -28,7 +28,7 @@ jobs:
         uses: astral-sh/setup-uv@v3
 
       - name: Run Sweep Training
-        run: make training-pipeline ARGS="--sweep --count 200"
+        run: make sweep-training ARGS="--count 200"
 
       - name: Pick Champion
         run: make select-champion

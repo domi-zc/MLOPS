@@ -1,11 +1,8 @@
-import argparse
 import joblib
 import wandb
 import os
 import json
-import dotenv
 
-from pathlib import Path
 from ml_pipeline.training_pipeline.data_builder import TrainingDataBuilder
 from ml_pipeline.training_pipeline.model_trainer import WalkForwardTrainer
 from ml_pipeline.config.model_data import (
@@ -13,8 +10,7 @@ from ml_pipeline.config.model_data import (
     MODEL_ARTIFACT_NAME,
     MODEL_PATH,
     FEATURE_COLS,
-    DEFAULT_CONFIG,
-    SWEEP_CONFIG
+    DEFAULT_CONFIG
 )
 
 MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -32,7 +28,7 @@ def main():
 
     run = wandb.init(
         project=WANDB_PROJECT_NAME,
-        job_type="train",
+        job_type="train_production",
         config=config_to_use
     )
     
@@ -43,75 +39,35 @@ def main():
     val_metrics = trainer.run_cross_validation(X_train_val, y_train_val)
     
     wandb.log(val_metrics)
-    print(f"\nAccuracy: {val_metrics['val_accuracy']:.2f} | Precision: {val_metrics['val_precision']:.2f} | Recall: {val_metrics['val_recall']:.2f} | F1: {val_metrics['val_f1']:.2f} | Optimal Treshold: {val_metrics['optimal_threshold']:.2f}")
+    print(f"\nAccuracy: {val_metrics['val_accuracy']:.2f} | Precision: {val_metrics['val_precision']:.2f} | Recall: {val_metrics['val_recall']:.2f} | F1: {val_metrics['val_f1']:.2f}")
 
-    is_sweep = run.sweep_id is not None
+    print("Executing final production training on 100% of data...")
+    X_all, y_all = training_data_builder.get_all_data(X_train_val, y_train_val, X_test, y_test)
+    final_model = trainer.train_production_model(X_all, y_all)
 
-    if is_sweep:
-        print("Sweep Run Detected. Skipping production training and model registry.")
-    else:
-        print("Executing final production training on 100% of data...")
-        X_all, y_all = training_data_builder.get_all_data(X_train_val, y_train_val, X_test, y_test)
-        final_model = trainer.train_production_model(X_all, y_all)
-
-        joblib.dump(final_model, MODEL_PATH)
+    joblib.dump(final_model, MODEL_PATH)
+    
+    artifact = wandb.Artifact(
+        name=MODEL_ARTIFACT_NAME,
+        type="model",
+        metadata={
+            "features": FEATURE_COLS,
+            "optimal_threshold": val_metrics["optimal_threshold"],
+            "val_accuracy": val_metrics["val_accuracy"],
+            "val_precision": val_metrics["val_precision"],
+            "val_recall": val_metrics["val_recall"],
+            "val_f1": val_metrics["val_f1"],
+            "trained_on": "100_percent_all_data"
+        }
+    )
+    artifact.add_file(local_path=str(MODEL_PATH))
+    
+    aliases = ["latest"]
+    if val_metrics["val_precision"] >= 0.6:
+        aliases.append("champion")
         
-        artifact = wandb.Artifact(
-            name=MODEL_ARTIFACT_NAME,
-            type="model",
-            metadata={
-                "features": FEATURE_COLS,
-                "optimal_threshold": val_metrics["optimal_threshold"],
-                "val_accuracy": val_metrics["val_accuracy"],
-                "val_precision": val_metrics["val_precision"],
-                "val_recall": val_metrics["val_recall"],
-                "val_f1": val_metrics["val_f1"],
-                "trained_on": "100_percent_all_data"
-            }
-        )
-        artifact.add_file(local_path=str(MODEL_PATH))
-        
-        aliases = ["latest"]
-        if val_metrics["val_precision"] >= 0.6:
-            aliases.append("champion")
-            
-        run.log_artifact(artifact, aliases=aliases)
-        
+    run.log_artifact(artifact, aliases=aliases)
     wandb.finish()
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--sweep", action="store_true")
-    parser.add_argument("--count", type=int, default=10)
-    
-    args = parser.parse_args()
-
-    if args.sweep:
-        print(f"Initializing Bayesian Sweep for {args.count} runs...")
-
-        wandb_entity = os.getenv("WANDB_ENTITY")
-    
-        sweep_id = wandb.sweep(
-            sweep=SWEEP_CONFIG, 
-            project=WANDB_PROJECT_NAME, 
-            entity=wandb_entity
-        )
-        
-        github_env_path = os.getenv("GITHUB_ENV")
-        
-        if github_env_path:
-            with open(github_env_path, "a") as f:
-                f.write(f"SWEEP_ID={sweep_id}\n")
-            print(f"Successfully injected SWEEP_ID={sweep_id} into GitHub Actions environment.")
-
-        else:
-            env_path = Path(".env")
-            env_path.touch(exist_ok=True)
-            dotenv.set_key(env_path, "SWEEP_ID", sweep_id)
-            
-            print(f"\nSuccessfully wrote SWEEP_ID={sweep_id} to your .env file!")
-
-        wandb.agent(sweep_id, function=main, count=args.count)
-    else:
-        print("Executing single production run...")
-        main()
+    main()
