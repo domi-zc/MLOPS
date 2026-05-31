@@ -52,5 +52,6 @@ jobs:
         run: make training-pipeline
 
       - name: Trigger Model Refresh on VPS
+        if: steps.monitor_step.outputs.drift_detected != 'true'
         run: |
           curl -X POST http://${{ vars.VPS_IP }}/api/refresh-model

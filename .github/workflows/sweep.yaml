@@ -34,3 +34,7 @@ jobs:
 
       - name: Train Final Champion Model
         run: make training-pipeline
+
+      - name: Trigger Model Refresh on VPS
+        run: |
+          curl -X POST http://${{ vars.VPS_IP }}/api/refresh-model
