@@ -8,10 +8,15 @@ backfill:
 	@echo "Starting Historical Backfill..."
 	uv run --extra pipeline python -m ml_pipeline.feature_pipeline.load --backfill
 
+.PHONY: sweep-training
+sweep-training:
+	@echo "Starting Hyperparameter Sweep..."
+	uv run --extra pipeline python -m ml_pipeline.training_pipeline.sweep $(ARGS)
+
 .PHONY: training-pipeline
 training-pipeline:
-	@echo "Starting Training Pipeline..."
-	uv run --extra pipeline python -m ml_pipeline.training_pipeline.train $(ARGS)
+	@echo "Starting Final Production Training..."
+	uv run --extra pipeline python -m ml_pipeline.training_pipeline.train
 
 .PHONY: select-champion
 select-champion:
