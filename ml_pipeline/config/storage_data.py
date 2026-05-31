@@ -25,15 +25,15 @@ def get_prediction_path(version: str = "v0") -> str:
     if STORAGE_MODE == "cloud":
         return f"s3://{GCS_BUCKET_NAME}/{PREDICTION_DIR}/{modelname_version}/{PREDICTION_FILE}"
     else:
-        return f"data/{PREDICTION_DIR}/{modelname_version}/{PREDICTION_FILE}"
+        local_dir = f"data/{PREDICTION_DIR}/{modelname_version}"
+        os.makedirs(local_dir, exist_ok=True)
+        
+        return f"{local_dir}/{PREDICTION_FILE}"
 
 if STORAGE_MODE == "cloud":
     FEATURE_PATH = f"s3://{GCS_BUCKET_NAME}/{FEATURE_DIR}/{FEATURE_FILE}"
-    PREDICTION_PATH = f"s3://{GCS_BUCKET_NAME}/{PREDICTION_DIR}/{PREDICTION_FILE}"
 else:
     FEATURE_PATH = f"data/{FEATURE_DIR}/{FEATURE_FILE}"
-    PREDICTION_PATH = f"data/{PREDICTION_DIR}/{PREDICTION_FILE}"
-
     os.makedirs(f"data/{FEATURE_DIR}", exist_ok=True)
     os.makedirs(f"data/{PREDICTION_DIR}", exist_ok=True)
     
