@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from sklearn.metrics import precision_score
 from ml_pipeline.inference_pipeline.data_fetcher import LiveDataFetcher
 from ml_pipeline.inference_pipeline.model_fetcher import ModelFetcher
-from ml_pipeline.config.storage_data import FEATURE_PATH, LOG_PATH, get_storage_options
+from ml_pipeline.config.storage_data import FEATURE_PATH, get_prediction_path, get_storage_options
 
 def grade_the_past_30_days():
     """
@@ -13,6 +13,12 @@ def grade_the_past_30_days():
     and calculates the rolling 30-day precision. Incorporates the minimum trade volume rule.
     """
     options = get_storage_options()
+
+    model_fetcher = ModelFetcher()
+    _, _, metrics = model_fetcher.get_champion_model()
+    current_version = metrics.get("version", "v0")
+
+    prediction_path = get_prediction_path(current_version)
     
     try:
         truth_df = pd.read_parquet(FEATURE_PATH, storage_options=options)
@@ -21,9 +27,15 @@ def grade_the_past_30_days():
         return
     
     try:
-        guesses_df = pd.read_parquet(LOG_PATH, storage_options=options)
+        guesses_df = pd.read_parquet(prediction_path, storage_options=options)
     except Exception:
-        print(f"No prediction log found at {LOG_PATH}.")
+        print(f"No prediction log found for {current_version}. Waiting for more data...")
+        return
+    
+    try:
+        guesses_df = pd.read_parquet(get_prediction_path(), storage_options=options)
+    except Exception:
+        print(f"No prediction log found at {get_prediction_path()}.")
         return
 
     merged_df = pd.merge(guesses_df, truth_df[['date', 'target']], on='date', how='inner')
@@ -81,15 +93,21 @@ def lock_in_tomorrows_prediction():
 
     options = get_storage_options()
 
+    model_fetcher = ModelFetcher()
+    _, _, metrics = model_fetcher.get_champion_model()
+    current_version = metrics.get("version", "v0")
+
+    prediction_path = get_prediction_path(current_version)
+
     try:
-        existing_log = pd.read_parquet(LOG_PATH, storage_options=options)
+        existing_log = pd.read_parquet(prediction_path, storage_options=options)
         updated_log = pd.concat([existing_log, new_log]).drop_duplicates(subset=['date'], keep='last')
         print("Appending prediction to existing cloud log...")
     except Exception:
         print("Creating a new prediction log in the cloud...")
         updated_log = new_log
 
-    updated_log.to_parquet(LOG_PATH, index=False, storage_options=options)
+    updated_log.to_parquet(prediction_path, index=False, storage_options=options)
     print(f"Locked in prediction '{raw_prediction}' for date: {today_date.strftime('%Y-%m-%d')}")
 
 

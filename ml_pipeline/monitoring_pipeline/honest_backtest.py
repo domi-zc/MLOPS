@@ -2,7 +2,7 @@ import pandas as pd
 from pathlib import Path
 from tqdm import tqdm
 
-from ml_pipeline.config.storage_data import FEATURE_PATH, LOG_PATH, get_storage_options
+from ml_pipeline.config.storage_data import FEATURE_PATH, PREDICTION_PATH, get_storage_options
 from ml_pipeline.config.model_data import (
     FEATURE_COLS,
     TARGET_COL,
@@ -55,8 +55,8 @@ def run_honest_backtest(days_to_simulate=300):
 
     log_df = pd.DataFrame(log_entries)
 
-    print(f"Uploading backtest log to {LOG_PATH}...")
-    log_df.to_parquet(LOG_PATH, index=False, storage_options=options)
+    print(f"Uploading backtest log to {PREDICTION_PATH}...")
+    log_df.to_parquet(PREDICTION_PATH, index=False, storage_options=options)
     
     print(f"\nHonest Backtest Complete! Saved {len(log_df)} predictions.")
 

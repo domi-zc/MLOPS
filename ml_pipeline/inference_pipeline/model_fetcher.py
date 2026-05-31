@@ -28,7 +28,8 @@ class ModelFetcher:
             "accuracy": metadata.get("val_accuracy", 0.0),
             "precision": metadata.get("val_precision", 0.0),
             "recall": metadata.get("val_recall", 0.0),
-            "f1": metadata.get("val_f1", 0.0)
+            "f1": metadata.get("val_f1", 0.0),
+            "version": artifact.version
         }
         
         model_dir = artifact.download()
