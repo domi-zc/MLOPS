@@ -41,4 +41,4 @@ jobs:
 
       - name: Trigger Model Refresh on VPS
         run: |
-          curl -X POST http://${{ vars.VPS_IP }}/api/refresh-model
+          curl -f -X POST http://${{ vars.VPS_IP }}/backend-api/refresh-model || echo "VPS not reachable. Skipping hot-swap."
