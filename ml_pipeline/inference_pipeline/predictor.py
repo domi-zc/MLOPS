@@ -23,3 +23,20 @@ class BitcoinPredictor:
         }
         
         return result
+
+if __name__ == "__main__":
+    from ml_pipeline.inference_pipeline.data_fetcher import LiveDataFetcher
+    from ml_pipeline.inference_pipeline.model_fetcher import ModelFetcher
+    
+    data_fetcher = LiveDataFetcher()
+    features_df = data_fetcher.get_todays_features()
+    
+    model_fetcher = ModelFetcher()
+    model, threshold, metrics = model_fetcher.get_champion_model()
+    
+    predictor = BitcoinPredictor(model, threshold, metrics)
+    decision = predictor.predict(features_df)
+    
+    print("\n--- Final Trading Decision ---")
+    for key, value in decision.items():
+        print(f"{key.replace('_', ' ').title()}: {value}")
