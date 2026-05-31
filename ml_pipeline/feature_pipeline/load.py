@@ -39,7 +39,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.backfill:
-        start_date = "2014-09-17"
+        start_date = "2016-06-01"
         days_to_fetch = None
         print(f"\n--- Running Extract: BACKFILL (Since {start_date}) ---")
     else:
