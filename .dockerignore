@@ -16,3 +16,7 @@
 
 # Frontend
 frontend/
+
+# Tests
+**/.pytest_cache/
+tests/
