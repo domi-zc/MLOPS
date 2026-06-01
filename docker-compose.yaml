@@ -6,6 +6,8 @@ services:
     container_name: bitcoin-ml-api
     env_file:
       - .env
+    volumes:
+      - ./.secrets:/app/.secrets:ro
     restart: unless-stopped
     networks:
       - sniper_net
