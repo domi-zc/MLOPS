@@ -30,6 +30,24 @@ export default function StatsPage() {
         <div className="text-gray-400 animate-pulse font-mono">Loading telemetry...</div>
       ) : (
         <div className="space-y-4">
+          
+          <div className="flex justify-between items-center border-b border-gray-800 pb-3">
+            <span className="text-gray-400 text-sm">Model Name</span>
+            <span className="font-mono text-blue-400 font-bold">{stats.metrics?.name || "N/A"}</span>
+          </div>
+
+          <div className="flex justify-between items-center border-b border-gray-800 pb-3">
+            <span className="text-gray-400 text-sm">Model Version</span>
+            <span className="font-mono text-blue-400 font-bold">{stats.metrics?.version || "N/A"}</span>
+          </div>
+
+          <div className="flex justify-between items-center border-b border-gray-800 pb-3">
+            <span className="text-gray-400 text-sm">Created At</span>
+            <span className="font-mono text-blue-400 font-bold">
+              {stats.metrics?.created_at ? new Date(stats.metrics.created_at).toLocaleString() : "N/A"}
+            </span>
+          </div>
+
           <div className="flex justify-between items-center border-b border-gray-800 pb-3">
             <span className="text-gray-400 text-sm">Threshold</span>
             <span className="font-mono text-blue-400 font-bold">{Number(stats.threshold).toFixed(2)}</span>

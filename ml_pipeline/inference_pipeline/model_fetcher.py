@@ -25,11 +25,13 @@ class ModelFetcher:
         metadata = artifact.metadata
         threshold = metadata.get("optimal_threshold", 0.5)
         metrics = {
+            "name": self.artifact_name,
             "accuracy": metadata.get("val_accuracy", 0.0),
             "precision": metadata.get("val_precision", 0.0),
             "recall": metadata.get("val_recall", 0.0),
             "f1": metadata.get("val_f1", 0.0),
-            "version": artifact.version
+            "version": artifact.version,
+            "created_at": artifact.created_at
         }
         
         model_dir = artifact.download()
