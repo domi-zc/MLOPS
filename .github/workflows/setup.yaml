@@ -26,11 +26,18 @@ jobs:
       STORAGE_MODE: ${{ vars.STORAGE_MODE }}
 
     steps:
-      - name: Checkout Code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Install uv
         uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
       - name: Historical Backfill
         run: make backfill START_DATE=${{ github.event.inputs.start_date }}
