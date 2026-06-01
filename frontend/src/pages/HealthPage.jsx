@@ -30,7 +30,7 @@ export default function HealthPage() {
       <div className="space-y-4">
 
         <div className="flex justify-between items-center p-4 bg-gray-950/50 rounded-lg border border-gray-800/50">
-          <span className="text-gray-400 font-medium">API Server Connection</span>
+          <span className="text-gray-400 font-medium">Backend Connection</span>
           <div className="flex items-center space-x-2">
             <div className={`w-2.5 h-2.5 rounded-full ${health?.status === 'online' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-red-500'}`}></div>
             <span className="font-mono font-bold text-gray-200">

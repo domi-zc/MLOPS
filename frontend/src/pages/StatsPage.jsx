@@ -22,7 +22,7 @@ export default function StatsPage() {
     <div className="w-full max-w-2xl mx-auto bg-gray-900 border border-gray-800 rounded-xl p-8 shadow-xl relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-cyan-400"></div>
 
-      <h2 className="text-2xl font-bold text-white mb-6 border-b border-gray-800 pb-4">Metrics</h2>
+      <h2 className="text-2xl font-bold text-white mb-6 border-b border-gray-800 pb-4">Model information</h2>
             
       {error ? (
         <div className="text-red-400 font-mono">API Offline: {error}</div>

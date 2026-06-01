@@ -13,10 +13,10 @@ export default function Navbar() {
         Prediction
       </Link>
       <Link to="/stats" className={getLinkClass('/stats')}>
-        Metrics
+        Model Information
       </Link>
       <Link to="/health" className={getLinkClass('/health')}>
-        Health
+        Status
       </Link>
     </nav>
   );
