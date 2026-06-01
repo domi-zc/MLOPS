@@ -53,3 +53,9 @@ dist-ssr
 # Test
 .pytest_cache
 fake_entity
+
+# Terraform
+.terraform
+*.tfstate*
+*.tfvars
+.terraform.lock.hcl
