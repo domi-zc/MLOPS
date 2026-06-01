@@ -26,3 +26,8 @@ pipeline = [
     "coinmetrics-api-client>=2026.4.30.17",
     "yfinance>=1.4.0",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+]

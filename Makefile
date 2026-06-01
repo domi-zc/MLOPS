@@ -39,3 +39,8 @@ backfill-predictions:
 monitoring-pipeline:
 	@echo "Starting Monitoring Pipeline..."
 	uv run python -m ml_pipeline.monitoring_pipeline.monitor
+
+.PHONY: test
+test:
+	@echo "Running unit tests..."
+	PYTHONPATH=. uv run --extra pipeline pytest -v
